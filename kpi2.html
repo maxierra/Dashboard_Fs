@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>INDICADORES KPI</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        .grafico-container {
+            display: inline-block;
+            margin: 10px;
+            width: 230px;
+            vertical-align: top;
+        }
+
+        .center-content {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* Estilos para el título del gráfico */
+        .grafico-container h3 {
+            font-size: 18px;
+            margin: 20px;
+        }
+
+        /* Estilos para el encabezado h1 dentro de center-content */
+        .center-content h1 {
+            font-size: 35px;
+            font-weight: bold;
+        }
+
+        /* Estilo para rotar el gráfico */
+        .velocimetro {
+            transform: rotate(360deg);
+        }
+
+        /* Estilos para el campo de entrada de texto */
+        .valorInput {
+            font-size: 16px;
+            font-weight: bold;
+            width: 70px;
+            transform: rotate(360deg);
+            transform-origin: left center;
+        }
+
+        /* Estilos para la leyenda */
+        .porcentaje {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="center-content">
+        <h1 style="font-weight: bold;">INDICADORES KPI</h1>
+    </div>
+
+    <!-- Primer grupo de 4 gráficos e input -->
+    <div class="center-content">
+        <div class="grafico-container">
+            <h3>Autorizaciones</h3>
+            <div class="velocimetro">
+                <h3 style="text-align: center;">Porcentaje Alcanzado: 0%</h3>
+            </div>
+        </div>
+
+        <div class="grafico-container">
+            <h3>Disponibilidad Apis</h3>
+            <div class="velocimetro">
+                <h3 style="text-align: center;">Porcentaje Alcanzado: 0%</h3>
+            </div>
+        </div>
+
+        <div class="grafico-container">
+            <h3>Tiempos de respuesta Apis</h3>
+            <div class="velocimetro">
+                <h3 style="text-align: center;">Porcentaje Alcanzado: 0%</h3>
+            </div>
+        </div>
+
+        <div class="grafico-container">
+            <h3>Porcesadas Chile</h3>
+            <div class="velocimetro">
+                <h3 style="text-align: center;">Porcentaje Alcanzado: 0%</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Segundo grupo de 4 gráficos e input -->
+    <div class="center-content">
+        <div class="grafico-container">
+            <h3>Procesadas Peru</h3>
+            <div class="velocimetro">
+                <h3 style="text-align: center;">Porcentaje Alcanzado: 0%</h3>
+            </div>
+        </div>
+
+        <div class="grafico-container">
+            <h3>Disponibilidad Mastercard</h3>
+            <div class="velocimetro">
+                <h3 style="text-align: center;">Porcentaje Alcanzado: 0%</h3>
+            </div>
+        </div>
+
+        <div class="grafico-container">
+            <h3>Disponibilidad Mambu</h3>
+            <div class="velocimetro">
+                <h3 style="text-align: center;">Porcentaje Alcanzado: 0%</h3>
+            </div>
+        </div>
+
+        <div class="grafico-container">
+            <h3>Disponibilidad Global 66</h3>
+            <div class="velocimetro">
+                <h3 style="text-align: center;">Porcentaje Alcanzado: 0%</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Campos de entrada de texto para los grupos -->
+    <div id="input-container">
+        <label for="valorInput1">Grupo 1:</label>
+        <input type="number" class="valorInput" placeholder="0">
+        <input type="number" class="valorInput" placeholder="0">
+        <input type="number" class="valorInput" placeholder="0">
+        <input type="number" class="valorInput" placeholder="0">
+
+        <label for="valorInput2">Grupo 2:</label>
+        <input type="number" class="valorInput" placeholder="0">
+        <input type="number" class="valorInput" placeholder="0">
+        <input type="number" class="valorInput" placeholder="0">
+        <input type="number" class="valorInput" placeholder="0">
+    </div>
+
+    <script>
+        // Colores personalizados
+        const colores = ["#ff0000", "#ff8800", "#ffcc00", "#aaffaa", "#88ff88", "#00ff00"];
+        const svgs = document.querySelectorAll('.velocimetro');
+        const inputs = document.querySelectorAll('.valorInput');
+
+        svgs.forEach((svg, index) => {
+            crearVelocimetro(0, svg, index);
+        });
+
+        inputs.forEach((input, index) => {
+            input.addEventListener("input", () => {
+                actualizarGrafico(input, index);
+            });
+        });
+
+        // Función para crear un velocímetro con el valor proporcionado
+        function crearVelocimetro(valor, svg, index) {
+            const width = 200;
+            const height = 200;
+
+            // Eliminar el SVG anterior si existe
+            svg.innerHTML = '';
+
+            const newSvg = d3.select(svg)
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            // Dividir el círculo en 6 partes iguales y aplicar colores personalizados en 180 grados
+            const anguloPorSegmento = (Math.PI) / 6;
+            for (let i = 0; i < 6; i++) {
+                const startAngulo = anguloPorSegmento * i - (Math.PI * 0.5);
+                const endAngulo = anguloPorSegmento * (i + 1) - (Math.PI * 0.5);
+
+                newSvg.append("path")
+                    .attr("transform", "translate(100,100)")
+                    .attr("d", d3.arc()
+                        .innerRadius(70)
+                        .outerRadius(100)
+                        .startAngle(startAngulo)
+                        .endAngle(endAngulo)
+                    )
+                    .style("fill", colores[i]);
+            }
+
+            // Calcula el ángulo a partir del valor proporcionado
+            const angulo = (Math.PI * (valor / 100)) - (Math.PI * 0.5);
+
+            // Dibuja la flecha (polígono) en el ángulo correspondiente
+            newSvg.append("polygon")
+                .attr("points", "100,20 105,30 95,30")
+                .attr("transform", `rotate(${angulo * (180 / Math.PI)} 100 100)`)
+                .style("fill", "black");
+
+            // Actualiza el valor mostrado en el gráfico
+            newSvg.append("text")
+                .attr("x", 100)
+                .attr("y", 160)
+                .attr("font-size", "16px")
+                .attr("font-weight", "bold")
+                .attr("text-anchor", "middle")
+                .attr("class", "porcentaje")
+                .text(`Porcentaje Alcanzado: ${valor}%`);
+        }
+
+        // Función para actualizar el gráfico cuando se ingresa un valor en el campo de entrada de texto
+        function actualizarGrafico(input, index) {
+            const valorInput = input.value;
+            if (valorInput >= 0 && valorInput <= 100) {
+                crearVelocimetro(parseFloat(valorInput), svgs[index], index);
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

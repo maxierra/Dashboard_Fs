@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Métricas</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+         /* Estilos para el footer */
+         #footerContainer {
+            background-color: #00d1b2;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            font-size: 18px; /* Cambia el tamaño de la fuente según tus preferencias */
+        }
+        h2 {
+            font-size: 75px;
+            text-align: center;
+        }
+
+        .positivo {
+            color: green;
+            font-weight: bold;
+        }
+
+        .negativo {
+            color: red;
+            font-weight: bold;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .table th, .table td {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbarContainer"></div>
+    <div id="footerContainer"></div>
+    <div class="container mt-5">
+        <h2 class="text-center">Métricas</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="bold">TITULO</th>
+                    <th>TRX</th>
+                    <th>STAN IN</th>
+                    <th>RESULTADO</th>
+                    <th>VALOR ESPERADO</th>
+                    <th class="bold">DIFERENCIA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="bold">AUTORIZACIONES</td>
+                    <td>42,326</td>
+                    <td>56</td>
+                    <td>99.87%</td>
+                    <td>99.83%</td>
+                    <td class="positivo">0.04%</td>
+                </tr>
+                <tr>
+                    <td class="bold">DISPONIBILIDAD APIS</td>
+                    <td>43,200</td>
+                    <td>0</td>
+                    <td>100%</td>
+                    <td>99.83%</td>
+                    <td class="positivo">0.17%</td>
+                </tr>
+                <tr>
+                    <td class="bold">TIEMPOS DE RESPUESTA APIS</td>
+                    <td>30,339,086</td>
+                    <td>49,056</td>
+                    <td>618.46</td>
+                    <td>1,000</td>
+                    <td class="negativo">381.54</td>
+                </tr>
+                <tr>
+                    <td class="bold">PROCESADAS CHILE</td>
+                    <td>31,787</td>
+                    <td>49</td>
+                    <td>99.85%</td>
+                    <td>99.83%</td>
+                    <td class="positivo">0.02%</td>
+                </tr>
+                <tr>
+                    <td class="bold">PROCESADAS PERU</td>
+                    <td>10,595</td>
+                    <td>7</td>
+                    <td>99.93%</td>
+                    <td>99.83%</td>
+                    <td class="positivo">0.10%</td>
+                </tr>
+                <tr>
+                    <td class="bold">DISPONIBILIDAD MASTERCARD</td>
+                    <td>43,200</td>
+                    <td>0</td>
+                    <td>100%</td>
+                    <td>99.83%</td>
+                    <td class="positivo">0.17%</td>
+                </tr>
+                <tr>
+                    <td class="bold">DISPONIBILIDAD MAMBU</td>
+                    <td>42,442</td>
+                    <td>156</td>
+                    <td>99.63%</td>
+                    <td>99.83%</td>
+                    <td class="negativo">-0.20%</td>
+                </tr>
+                <tr>
+                    <td class="bold">DISPONIBILIDAD GLOBAL 66</td>
+                    <td>43,200</td>
+                    <td>0</td>
+                    <td>100%</td>
+                    <td>99.83%</td>
+                    <td class="positivo">0.17%</td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+    <script>
+          // Cargar la barra de navegación desde el archivo navbar.html
+          fetch('navbar.html')
+          .then(response => response.text())
+          .then(data => {
+              document.getElementById('navbarContainer').innerHTML = data;
+          })
+          .catch(error => console.error('Error al cargar la barra de navegación:', error));
+
+      // Utiliza fetch para cargar el contenido del footer.html y luego lo inserta en #footerContainer
+      fetch('footer.html')
+      .then(response => response.text())
+      .then(data => {
+          document.getElementById('footerContainer').innerHTML = data;
+      });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
