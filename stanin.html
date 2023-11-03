@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lectura de Archivo Excel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.3/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+          /* Estilos para el footer */
+          #footerContainer {
+            background-color: #00d1b2;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            font-size: 18px; /* Cambia el tamaño de la fuente según tus preferencias */
+        }
+        .table {
+            width: 100%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        thead {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbarContainer"></div>
+    <div id="footerContainer"></div>
+    <input type="file" id="excel-file" accept=".xlsx">
+    <table id="excel-table" class="table table-bordered table-striped">
+        <thead>
+            <!-- Encabezados de la tabla se agregarán dinámicamente -->
+        </thead>
+        <tbody>
+            <!-- Datos de la tabla se agregarán dinámicamente -->
+        </tbody>
+    </table>
+    <script>
+             // Cargar la barra de navegación desde el archivo navbar.html
+             fetch('navbar.html')
+             .then(response => response.text())
+             .then(data => {
+                 document.getElementById('navbarContainer').innerHTML = data;
+             })
+             .catch(error => console.error('Error al cargar la barra de navegación:', error));
+ 
+         // Utiliza fetch para cargar el contenido del footer.html y luego lo inserta en #footerContainer
+         fetch('footer.html')
+         .then(response => response.text())
+         .then(data => {
+             document.getElementById('footerContainer').innerHTML = data;
+         });
+        document.getElementById('excel-file').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const tableData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                const table = document.getElementById('excel-table');
+                const thead = table.querySelector('thead');
+                const tbody = table.querySelector('tbody');
+
+                // Limpia la tabla existente
+                thead.innerHTML = '';
+                tbody.innerHTML = '';
+
+                // Filtrar los datos por la condición
+                const filteredData = tableData.filter(function (rowData) {
+                    const standInValue = rowData[26];
+                    const aaValue = rowData[27];
+                    return (standInValue && (standInValue.toLowerCase() === 'si')) ||
+                        (aaValue && (aaValue.toLowerCase() === 'si'));
+                });
+
+                // Crear una lista con los índices de las columnas que deseas ocultar
+                const columnIndicesToHide = [6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]; // Índices de las columnas que se ocultarán
+
+                // Filtrar los encabezados de la tabla
+                const headerRow = tableData[0].filter((_, index) => !columnIndicesToHide.includes(index));
+                const headerRowElement = document.createElement('tr');
+                headerRow.forEach((header) => {
+                    const cell = document.createElement('th');
+                    cell.textContent = header;
+                    headerRowElement.appendChild(cell);
+                });
+                thead.appendChild(headerRowElement);
+
+                // Recorrer los datos filtrados y agregar filas a la tabla
+                for (let i = 1; i < filteredData.length; i++) {
+                    const rowData = filteredData[i].filter((_, index) => !columnIndicesToHide.includes(index));
+                    const row = document.createElement('tr');
+                    rowData.forEach((data) => {
+                        const cell = document.createElement('td');
+                        cell.textContent = data;
+                        row.appendChild(cell);
+                    });
+                    tbody.appendChild(row);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

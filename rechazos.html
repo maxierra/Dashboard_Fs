@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Conteo de Filas de Rechazo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.0/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+          /* Estilos para el footer */
+          #footerContainer {
+            background-color: #00d1b2;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            font-size: 18px; /* Cambia el tamaño de la fuente según tus preferencias */
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+        }
+
+        .tabla-container {
+            width: 40%; /* Reducir el ancho de la tabla */
+            margin-right: 20px; /* Separación entre la tabla y el gráfico */
+        }
+
+        .table-sm th, .table-sm td {
+            font-size: 14px;
+        }
+
+        .grafico-container {
+            width: 60%; /* Aumentar el ancho del gráfico */
+            text-align: right; /* Alinear el gráfico a la derecha */
+        }
+
+        #grafico {
+            width: 200px;
+            height: 200px;
+            margin-top: 40px; /* Bajar el gráfico aún más */
+        }
+
+        .total {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbarContainer"></div>
+    <div id="footerContainer"></div>
+
+    <script>
+        // Cargar la barra de navegación desde el archivo navbar.html
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbarContainer').innerHTML = data;
+            })
+            .catch(error => console.error('Error al cargar la barra de navegación:', error));
+               // Utiliza fetch para cargar el contenido del footer.html y luego lo inserta en #footerContainer
+        fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footerContainer').innerHTML = data;
+        });
+    </script>
+    <div class="container mt-4">
+        <div class="tabla-container">
+            <h1>Motivos de Rechazo</h1>
+            <input type="file" id="excel-file" accept=".xlsx" class="mt-4">
+            <table class="table table-striped table-sm mt-4">
+                <thead>
+                    <tr>
+                        <th scope="col">Número de Rechazo</th>
+                        <th class="descripcion">Descripción</th>
+                        <th scope="col">Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody id="resultado-tabla">
+                    <!-- La tabla se creará aquí -->
+                </tbody>
+            </table>
+        </div>
+        <div class="grafico-container">
+            <canvas id="grafico" width="150" height="150"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Variables para almacenar datos del gráfico
+        var etiquetas = [];
+        var datos = [];
+
+        // Función para procesar el archivo Excel y contar filas de rechazo
+        function procesarArchivo() {
+            var fileInput = document.getElementById('excel-file');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var data = e.target.result;
+                var workbook = XLSX.read(data, { type: 'binary' });
+
+                var sheet_name_list = workbook.SheetNames;
+                var worksheet = workbook.Sheets[sheet_name_list[0]];
+
+                // Convertir la hoja de cálculo a un objeto JSON
+                var jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                // Crear un objeto para contar las filas de rechazo
+                var conteoRechazos = {};
+
+                // Filtrar y contar las filas de rechazo
+                jsonData.forEach(function (row) {
+                    var rechazo = row['Rechazo'];
+                    if (rechazo) {
+                        var match = rechazo.match(/(\d+)\s*-\s*(.{1,})/); // Extraer número y descripción
+                        if (match) {
+                            var numeroRechazo = match[1]; // Tomar el número de rechazo
+                            var descripcion = match[2].substring(0, 15); // Tomar los primeros 15 caracteres de la descripción
+                            if (!conteoRechazos[numeroRechazo]) {
+                                conteoRechazos[numeroRechazo] = { descripcion: descripcion, cantidad: 1 };
+                            } else {
+                                conteoRechazos[numeroRechazo].cantidad++;
+                            }
+                        }
+                    }
+                });
+
+                // Crear la tabla con Bootstrap y calcular el total
+                var tablaHtml = '';
+                var total = 0;
+
+                // Ordenar conteo de mayor a menor
+                var conteoOrdenado = Object.keys(conteoRechazos).sort(function(a, b) {
+                    return conteoRechazos[b].cantidad - conteoRechazos[a].cantidad;
+                });
+
+                for (var numeroRechazo of conteoOrdenado) {
+                    var item = conteoRechazos[numeroRechazo];
+                    tablaHtml += '<tr><td>' + numeroRechazo + '</td><td>' + item.descripcion + '</td><td>' + item.cantidad + '</td></tr>';
+                    total += item.cantidad;
+
+                    // Agregar datos al gráfico
+                    etiquetas.push(numeroRechazo);
+                    datos.push(item.cantidad);
+                }
+                tablaHtml += '<tr><td class="total">Total</td><td></td><td class="total">' + total + '</td></tr>';
+                document.getElementById('resultado-tabla').innerHTML = tablaHtml;
+
+                // Crear el gráfico
+                crearGrafico();
+            };
+
+            reader.readAsBinaryString(file);
+        }
+
+        // Función para crear el gráfico circular
+        function crearGrafico() {
+            var ctx = document.getElementById('grafico').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'doughnut', // Tipo de gráfico circular
+                data: {
+                    labels: etiquetas,
+                    datasets: [{
+                        data: datos,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.5)',
+                            'rgba(54, 162, 235, 0.5)',
+                            'rgba(255, 206, 86, 0.5)',
+                            'rgba(75, 192, 192, 0.5)',
+                            'rgba(153, 102, 255, 0.5)'
+                        ]
+                    }]
+                },
+                options: {
+                    cutout: '70%', // Ajusta el tamaño del agujero en el centro
+                    responsive: true,
+                    aspectRatio: 1.9 // Cambia el aspect ratio para ajustar el tamaño del gráfico
+                }
+            });
+        }
+
+        // Escuchar cambios en el archivo y procesarlo
+        document.getElementById('excel-file').addEventListener('change', procesarArchivo);
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

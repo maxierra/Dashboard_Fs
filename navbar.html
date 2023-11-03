@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <style>
+        .navbar-item.is-active {
+            background-color: #00d1b2;
+            font-weight: bold;
+        }
+        
+        
+
+        /* Aplicar negrita a elementos de menú y submenú */
+        .navbar-link {
+            font-weight: bold;
+        }
+
+        .navbar-dropdown .navbar-item {
+            font-weight: bold;
+        }
+    </style>
+    <title>Barra de Inicio con Bulma</title>
+</head>
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="index.html">
+                INICIO
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbarMenu" class="navbar-menu">
+            <div class="navbar-start">
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        INDICADORES
+                    </a>
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="Kpi.html">KEY INDICATOR PERFORMANCE</a>
+                        <a class="navbar-item" href="#">MÉTRICAS</a>
+                        <a class="navbar-item" href="historicos1.html">HISTORICOS 1 AUTORIZACIONES / DISPONIBILIDAD APIS</a>
+                        <a class="navbar-item" href="historicos_2.html">HISTORICOS 2 TIEMPOS DE RESPUESTA APIS / PROCESADAS CHILE</a>
+                        <a class="navbar-item" href="historicos_3.html">HISTORICOS 3 PROCESADAS PERU / DISPONIBILIDAD MASTERCARD</a>
+                        <a class="navbar-item" href="historicos_4.html">HISTORICOS 4 DISPONIBILIDAD MAMBU / DISPONIBILIDAD GLOBAL 66</a>
+                    </div>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        PROCESADAS
+                    </a>
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="aprobadas.html">PROCESADAS CHILE/PERÚ</a>
+                        <a class="navbar-item" href="rechazos.html">PROCESOS RECHAZADAS</a>
+                        <a class="navbar-item" href="stanin.html">STAN IN</a>
+                    </div>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        CUENTAS ACTIVAS
+                    </a>
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="cuentas_activas.html">EVOLUCIÓN DE TARJETAS</a>
+                    </div>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        DATOS IMPORTANTES
+                    </a>
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="datos.html">IMPORTAR DATOS</a>
+                    </div>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        REPORTES APIS
+                    </a>
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="Apis.html">APIS GENERAL</a>
+                        <a class="navbar-item" href="#">SUBMENU 2</a>
+                        <a class="navbar-item" href="#">SUBMENU 3</a>
+                        <a class="navbar-item" href="#">SUBMENU 4</a>
+                        <a class="navbar-item" href="#">SUBMENU 5</a>
+                        <a class="navbar-item" href="#">SUBMENU 6</a>
+                        <a class="navbar-item" href="#">SUBMENU 7</a>
+                        <a class="navbar-item" href="#">SUBMENU 8</a>
+                        <a class="navbar-item" href="#">SUBMENU 9</a>
+                        <a class="navbar-item" href="#">SUBMENU 10</a>
+                    </div>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        OTROS
+                    </a>
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="#">TAREAS PROGRAMADAS</a>
+                        <a class="navbar-item" href="#">INCIDENCIAS</a>
+                        <a class="navbar-item" href="#">NOVEDADES Y PROXIMOS AVANCES</a>
+                    </div>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        RESPORTES HISTORICOS
+                    </a>
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="reportes_mensuales.html">REPORTES MENSUALES</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido de la página -->
+
+</body>
+</html>
+
+
+

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Conteo de Estados y Gráfico de Progreso</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        
+        /* Estilos para el footer */
+        #footerContainer {
+            background-color: #00d1b2;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            font-size: 18px; /* Cambia el tamaño de la fuente según tus preferencias */
+        }
+        .tabla-container {
+            width: 48%;
+            margin-right: 20px; /* Añade espacio entre tablas */
+        }
+
+        #container {
+            width: 30cm;
+            height: 10cm;
+            margin: 0 auto;
+        }
+
+        .negrita {
+            font-weight: bold;
+        }
+
+        /* Estilo para aumentar el tamaño del gráfico */
+        .grafico {
+            max-width: 340px;
+            max-height: 340px;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbarContainer"></div>
+    <div id="footerContainer"></div>
+
+    <script>
+        // Cargar la barra de navegación desde el archivo navbar.html
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbarContainer').innerHTML = data;
+            })
+            .catch(error => console.error('Error al cargar la barra de navegación:', error));
+            // Utiliza fetch para cargar el contenido del footer.html y luego lo inserta en #footerContainer
+        fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footerContainer').innerHTML = data;
+        });
+    </script>
+    <div class="container" id="container">
+        <div class="row">
+            <div class="tabla-container">
+                <h1 class="mt-4"><strong>Procesadas Chile</strong></h1>
+                <img src="chile.png" alt="Chile Image" width="50">
+                <input type="file" id="excel-file1" accept=".xlsx" class="mt-4">
+                <table class="table table-striped mt-4">
+                    <thead>
+                        <tr>
+                            <th class="negrita">Estado</th>
+                            <th class="negrita">Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultado-tabla1">
+                        <!-- La tabla se creará aquí -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="negrita">Total</td>
+                            <td id="total1" class="negrita" style="font-size: 1.2em;"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <canvas id="grafico-progreso1" width="400" height="400" class="grafico"></canvas>
+            </div>
+            <div class="tabla-container">
+                <h1 class="mt-4"><strong>Procesadas Perú</strong></h1>
+                <img src="peru.png" alt="Perú Image" width="50">
+                <input type="file" id="excel-file2" accept=".xlsx" class="mt-4">
+                <table class="table table-striped mt-4">
+                    <thead>
+                        <tr>
+                            <th class="negrita">Estado</th>
+                            <th class "negrita">Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultado-tabla2">
+                        <!-- La tabla se creará aquí -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="negrita">Total</td>
+                            <td id="total2" class="negrita" style="font-size: 1.2em;"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <canvas id="grafico-progreso2" width="400" height="400" class="grafico"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para procesar el archivo Excel y actualizar la tabla y el gráfico
+        function procesarArchivo(fileInputId, tablaId, totalId, graficoId) {
+            var fileInput = document.getElementById(fileInputId);
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var data = e.target.result;
+                var workbook = XLSX.read(data, { type: 'binary' });
+
+                var sheet_name_list = workbook.SheetNames;
+                var worksheet = workbook.Sheets[sheet_name_list[0]];
+
+                // Convertir la hoja de cálculo a un objeto JSON
+                var jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                // Crear un objeto para contar los estados
+                var conteoEstados = {
+                    'APROBADA': 0,
+                    'RECHAZADA': 0,
+                    'ANULADA': 0
+                };
+
+                var totalEstados = 0;
+
+                // Contar las palabras en la columna "Estado"
+                jsonData.forEach(function (row) {
+                    var estado = row['Estado'];
+
+                    // Verificar si el estado es "APROBADA", "RECHAZADA" o "ANULADA"
+                    if (estado) {
+                        var palabras = estado.split(' ');
+                        palabras.forEach(function (palabra) {
+                            var palabraMayuscula = palabra.toUpperCase();
+                            if (conteoEstados.hasOwnProperty(palabraMayuscula)) {
+                                conteoEstados[palabraMayuscula]++;
+                                totalEstados++;
+                            }
+                        });
+                    }
+                });
+
+                // Crear la tabla con Bootstrap
+                var tablaHtml = '';
+                for (var estado in conteoEstados) {
+                    var porcentaje = ((conteoEstados[estado] / totalEstados) * 100).toFixed(2);
+                    tablaHtml += '<tr><td class="negrita">' + estado + '</td><td class="negrita">' + conteoEstados[estado] + ' (' + porcentaje + '%)</td></tr>';
+                }
+                document.getElementById(tablaId).innerHTML = tablaHtml;
+
+                // Actualizar el total en la tabla
+                document.getElementById(totalId).innerText = totalEstados;
+
+                // Crear un gráfico de progreso
+                var ctx = document.getElementById(graficoId).getContext('2d');
+                var data = {
+                    labels: ['APROBADA', 'RECHAZADA', 'ANULADA'],
+                    datasets: [{
+                        data: [conteoEstados['APROBADA'], conteoEstados['RECHAZADA'], conteoEstados['ANULADA']],
+                        backgroundColor: ['green', 'red', 'yellow'], // Colores corregidos
+                    }]
+                };
+                var myProgressChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: data,
+                });
+            };
+
+            reader.readAsBinaryString(file);
+        }
+
+        // Escuchar cambios en los archivos y procesarlos
+        document.getElementById('excel-file1').addEventListener('change', function () {
+            procesarArchivo('excel-file1', 'resultado-tabla1', 'total1', 'grafico-progreso1');
+        });
+
+        document.getElementById('excel-file2').addEventListener('change', function () {
+            procesarArchivo('excel-file2', 'resultado-tabla2', 'total2', 'grafico-progreso2');
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

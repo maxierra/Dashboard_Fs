@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Descarga de archivos PDF</title>
+    <style>
+        /* Estilos para el footer */
+        #footerContainer {
+            background-color: #00d1b2;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            font-size: 18px; /* Cambia el tamaño de la fuente según tus preferencias */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="navbarContainer"></div>
+    <div id="footerContainer"></div>
+
+    <h1>INFORMES HISTORICOS</h1>
+    <>
+        
+            <li><a href="/reportes/julio.pptx" download="presentacion1.pptx">Descargar PresentacionJulio 2023</a></li>
+            <li><a href="/reportes/agosto.pptx" download="presentacion2.pptx">Descargar Presentacion Agosto 2023</a></li>
+            <li><a href="/reportes/septiembre.pptx" download="presentacion3.pptx">Descargar Presentación Septiembre 2023</a></li>
+            <!-- Agrega más enlaces para otros archivos PPTX según sea necesario -->
+        
+        <!-- Agrega más enlaces para otros archivos PDF según sea necesario -->
+    </ul>
+    <script>
+        // Cargar la barra de navegación desde el archivo navbar.html
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbarContainer').innerHTML = data;
+            })
+            .catch(error => console.error('Error al cargar la barra de navegación:', error));
+
+        // Utiliza fetch para cargar el contenido del footer.html y luego lo inserta en #footerContainer
+        fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footerContainer').innerHTML = data;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tabla y Gráfico de Líneas</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .margen-superior {
+            margin-top: 10px;
+        }
+        .table th,
+        .table td,
+        h1 {
+            font-size: 12px;
+        }
+        .grafico-lineas {
+            height: 250px; /* Ajusta la altura de los gráficos */
+        }
+        .grafico-container {
+            padding: 10px;
+        }
+        .container {
+            padding: 20px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+<body>
+    <div id="navbarContainer"></div>
+
+    <script>
+        // Cargar la barra de navegación desde el archivo navbar.html
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbarContainer').innerHTML = data;
+            })
+            .catch(error => console.error('Error al cargar la barra de navegación:', error));
+    </script>
+        <div class="row">
+            <!-- Primer grupo de tablas y gráficos en una línea -->
+            <div class="col-md-6">
+                <!-- Tabla y gráfico 1 -->
+                <div class="grafico-container">
+                    <h1 contenteditable style="font-weight: bold; font-size: 16px;">AUTORIZACIONES</h1>
+                    <table class="table margen-superior">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>may-23</th>
+                                <th>jun-23</th>
+                                <th>jul-23</th>
+                                <th>ago-23</th>
+                                <th>sep-23</th>
+                                <th>oct-23</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="titulo" contenteditable>VALOR ALCANZADO</td>
+                                <td class="valor" contenteditable data-mes="may-23">99.65</td>
+                                <td class="valor" contenteditable data-mes="jun-23">99.74</td>
+                                <td class="valor" contenteditable data-mes="jul-23">99.23</td>
+                                <td class="valor" contenteditable data-mes="ago-23">98.55</td>
+                                <td class="valor" contenteditable data-mes="sep-23">99.67</td>
+                                <td class="valor" contenteditable data-mes="oct-23">99.87</td>
+                            </tr>
+                            <tr>
+                                <td class="titulo">VALOR ESPERADO</td>
+                                <td>99.83</td>
+                                <td>99.83</td>
+                                <td>99.83</td>
+                                <td>99.83</td>
+                                <td>99.83</td>
+                                <td>99.83</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <canvas class="grafico-lineas grafico-1" width="100" height="50"></canvas>
+                </div>
+                
+                <!-- Tabla y gráfico 2 -->
+                <div class="grafico-container">
+                    <h1 contenteditable style="font-weight: bold; font-size: 16px;">DISPONIBILIDAD APIS</h1>
+                    <table class="table margen-superior">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>may-23</th>
+                                <th>jun-23</th>
+                                <th>jul-23</th>
+                                <th>ago-23</th>
+                                <th>sep-23</th>
+                                <th>oct-23</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="titulo" contenteditable>VALOR ALCANZADO</td>
+                                <td class="valor" contenteditable data-mes="may-23">99.65</td>
+                                <td class="valor" contenteditable data-mes="jun-23">99.74</td>
+                                <td class="valor" contenteditable data-mes="jul-23">99.23</td>
+                                <td class="valor" contenteditable data-mes="ago-23">98.55</td>
+                                <td class="valor" contenteditable data-mes="sep-23">99.67</td>
+                                <td class="valor" contenteditable data-mes="oct-23">99.87</td>
+                            </tr>
+                            <tr>
+                                <td class="titulo">VALOR ESPERADO</td>
+                                <td>99.83</td>
+                                <td>99.83</td>
+                                <td>99.83</td>
+                                <td>99.83</td>
+                                <td>99.83</td>
+                                <td>99.83</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <canvas class="grafico-lineas grafico-2" width="100" height="50"></canvas>
+                </div>
+            </div>
+            
+          
+                     
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var meses = ["may-23", "jun-23", "jul-23", "ago-23", "sep-23", "oct-23"];
+        
+        document.querySelectorAll(".grafico-lineas").forEach(function (canvas, index) {
+            var graficoData = {
+                labels: meses,
+                datasets: [
+                    {
+                        label: "VALOR ALCANZADO",
+                        data: [99.65, 99.74, 99.23, 98.55, 99.67, 99.87],
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        borderWidth: 2,
+                        fill: false,
+                    },
+                    {
+                        label: "VALOR ESPERADO",
+                        data: [99.83, 99.83, 99.83, 99.83, 99.83, 99.83],
+                        borderColor: "rgba(255, 99, 132, 1)",
+                        borderWidth: 2,
+                        fill: false,
+                    },
+                ],
+            };
+
+            var ctx = canvas.getContext("2d");
+            var myChart = new Chart(ctx, {
+                type: "line",
+                data: graficoData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: "category",
+                            position: "bottom",
+                            title: {
+                                display: true,
+                                text: "Mes",
+                            },
+                        },
+                        y: {
+                            min: 98,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: "Valor (%)",
+                            },
+                        },
+                    },
+                },
+            });
+            
+            // Función para actualizar gráfico y valores al editar
+            var valores = canvas.closest(".grafico-container").querySelectorAll(".valor");
+            valores.forEach(function (valor, indice) {
+                valor.addEventListener("input", function () {
+                    var valorAlcanzado = parseFloat(valor.textContent.replace(",", "."));
+                    graficoData.datasets[0].data[indice] = valorAlcanzado;
+                    myChart.update();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

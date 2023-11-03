@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Conteo de Estados y Porcentaje sin Stand-In</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.0/xlsx.full.min.js"></script>
+    <style>
+        .tabla-container {
+            width: 48%;
+            margin-right: 20px; /* Añade espacio entre tablas */
+        }
+
+        #container {
+            width: 30cm;
+            height: 10cm;
+            margin: 0 auto;
+        }
+
+        .negrita {
+            font-weight: bold;
+        }
+
+        /* Estilo para aumentar el tamaño del gráfico */
+        .grafico {
+            max-width: 340px;
+            max-height: 340px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="navbarContainer"></div>
+
+    <script>
+        // Cargar la barra de navegación desde el archivo navbar.html
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbarContainer').innerHTML = data;
+            })
+            .catch(error => console.error('Error al cargar la barra de navegación:', error));
+    </script>
+    
+    <div class="container" id="container">
+        <div class="tabla-container">
+            <h1 class="mt-4"><strong>Procesadas Chile</strong></h1>
+            <img src="chile.png" alt="Chile Image" width="50">
+            <input type="file" id="excel-file1" accept=".xlsx" class="mt-4">
+            <table class="table table-striped mt-4">
+                <thead>
+                    <tr>
+                        <th class="negrita">Estado</th>
+                        <th class="negrita">Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody id="resultado-tabla1">
+                    <!-- La tabla se creará aquí -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="negrita">Total</td>
+                        <td id="total1" class="negrita" style="font-size: 1.2em;"></td>
+                    </tr>
+                    <tr>
+                        <td class="negrita">Stand-In</td>
+                        <td id="standin1" class="negrita" style="font-size: 1.2em;"></td>
+                    </tr>
+                    <tr>
+                        <td class="negrita">Porcentaje sin Stand-In</td>
+                        <td id="porcentaje-standin1" class="negrita" style="font-size: 1.2em;"></td>
+                    </tr>
+                    <tr>
+                        <td class="negrita">Valor deseado 99.83%</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="tabla-container">
+            <h1 class="mt-4"><strong>Procesadas Perú</strong></h1>
+            <img src="peru.png" alt="Perú Image" width="50">
+            <input type="file" id="excel-file2" accept=".xlsx" class="mt-4">
+            <table class="table table-striped mt-4">
+                <thead>
+                    <tr>
+                        <th class="negrita">Estado</th>
+                        <th class="negrita">Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody id="resultado-tabla2">
+                    <!-- La tabla se creará aquí -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="negrita">Total</td>
+                        <td id="total2" class="negrita" style="font-size: 1.2em;"></td>
+                    </tr>
+                    <tr>
+                        <td class "negrita">Stand-In</td>
+                        <td id="standin2" class="negrita" style="font-size: 1.2em;"></td>
+                    </tr>
+                    <tr>
+                        <td class="negrita">Porcentaje sin Stand-In</td>
+                        <td id="porcentaje-standin2" class="negrita" style="font-size: 1.2em;"></td>
+                    </tr>
+                    <tr>
+                        <td class="negrita">Valor deseado 99.83%</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="tabla-container">
+            <h1 class="mt-4"><strong>Autorizaciones</strong></h1>
+            <table class="table table-striped mt-4">
+                <thead>
+                    <tr>
+                        <th class="negrita">Descripción</th>
+                        <th class="negrita">Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody id="resultado-tabla3">
+                    <!-- La tabla se calculará automáticamente -->
+                </tbody>
+            </table>
+            <p class="negrita">Valor deseado 99.83%</p>
+        </div>
+    </div>
+
+    <script>
+        // Variables para almacenar los totales
+        var totalChile = 0;
+        var standinChile = 0;
+        var totalPeru = 0;
+        var standinPeru = 0;
+
+        // Función para procesar el archivo Excel y actualizar la tabla y el gráfico
+        function procesarArchivo(fileInputId, tablaId, totalId, standinId, porcentajeStandinId, tabla3Id) {
+            var fileInput = document.getElementById(fileInputId);
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var data = e.target.result;
+                var workbook = XLSX.read(data, { type: 'binary' });
+
+                var sheet_name_list = workbook.SheetNames;
+                var worksheet = workbook.Sheets[sheet_name_list[0]];
+
+                // Convertir la hoja de cálculo a un objeto JSON
+                var jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                // Contadores para las categorías
+                var conteoAprobada = 0;
+                var conteoAnulada = 0;
+                var conteoRechazada = 0;
+                var sumaStandin = 0;
+
+                // Contar las categorías y sumar los Stand-In
+                jsonData.forEach(function (row) {
+                    var estado = row['Estado'];
+                    if (estado) {
+                        var estadoMayuscula = estado.toUpperCase();
+                        if (estadoMayuscula.includes('APROBADA')) {
+                            conteoAprobada++;
+                        } else if (estadoMayuscula.includes('ANULADA')) {
+                            conteoAnulada++;
+                        } else if (estadoMayuscula.includes('RECHAZADA')) {
+                            conteoRechazada++;
+                        }
+                    }
+                    
+                    var standin = row['Stand-In'];
+                    if (standin && standin.toUpperCase() === 'SI') {
+                        sumaStandin++;
+                    }
+                });
+
+                // Calcular el total de registros sin Stand-In
+                var totalRegistrosSinStandin = conteoAprobada + conteoAnulada + conteoRechazada;
+                document.getElementById(totalId).innerText = totalRegistrosSinStandin;
+                document.getElementById(standinId).innerText = sumaStandin;
+
+                // Calcular el porcentaje de registros sin Stand-In con respecto al total
+                var totalRegistros = totalRegistrosSinStandin + sumaStandin;
+                var porcentajeSinStandin = ((totalRegistrosSinStandin / totalRegistros) * 100).toFixed(2) + '%';
+                document.getElementById(porcentajeStandinId).innerText = porcentajeSinStandin;
+
+                // Actualizar la tabla de Total General
+                if (fileInputId === 'excel-file1') {
+                    totalChile = totalRegistrosSinStandin;
+                    standinChile = sumaStandin;
+                } else if (fileInputId === 'excel-file2') {
+                    totalPeru = totalRegistrosSinStandin;
+                    standinPeru = sumaStandin;
+                }
+
+                var totalGeneral = totalChile + totalPeru;
+                var standinGeneral = standinChile + standinPeru;
+                var totalGeneralSinStandin = totalGeneral - standinGeneral;
+                document.getElementById(tabla3Id).innerHTML = '';
+
+                var tablaHtml = '';
+                tablaHtml += '<tr><td class="negrita">Total Sin Stand-In</td><td class="negrita">' + totalGeneralSinStandin + '</td></tr>';
+                tablaHtml += '<tr><td class="negrita">Total Stand-In</td><td class="negrita">' + standinGeneral + '</td></tr>';
+                var porcentajeTotal = ((totalGeneralSinStandin / totalGeneral) * 100).toFixed(2) + '%';
+                tablaHtml += '<tr><td class="negrita">Porcentaje sin Stand-In</td><td class="negrita">' + porcentajeTotal + '</td></tr>';
+                document.getElementById(tabla3Id).innerHTML = tablaHtml;
+            };
+
+            reader.readAsBinaryString(file);
+        }
+
+        // Escuchar cambios en los archivos y procesarlos
+        document.getElementById('excel-file1').addEventListener('change', function () {
+            procesarArchivo('excel-file1', 'resultado-tabla1', 'total1', 'standin1', 'porcentaje-standin1', 'resultado-tabla3');
+        });
+
+        document.getElementById('excel-file2').addEventListener('change', function () {
+            procesarArchivo('excel-file2', 'resultado-tabla2', 'total2', 'standin2', 'porcentaje-standin2', 'resultado-tabla3');
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+

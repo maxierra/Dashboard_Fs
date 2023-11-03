@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gráfico de Tipo Velocímetro con 6 Colores e Intervalos de 10%</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        .grafico-container {
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .center-content {
+            text-align: center;
+            margin-top: 30px; /* Añade margen superior para bajar los elementos */
+        }
+
+        .graficos-linea {
+            display: flex;
+        }
+
+        .graficos-linea .grafico-container {
+            margin: 0 10px;
+        }
+         /* Estilos para el título del gráfico */
+         .grafico-container h3 {
+            font-size: 20px; /* Tamaño de fuente más grande */
+        }
+
+        /* Estilos para el encabezado h1 dentro de center-content */
+        .center-content h1 {
+            font-size: 35px; /* Tamaño de fuente más grande para el encabezado h1 */
+            font-weight: bold;
+        }
+
+        
+            /* Estilos para el footer */
+            #footerContainer {
+                background-color: #00d1b2;
+                color: #fff;
+                text-align: center;
+                padding: 10px;
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                font-size: 18px; /* Cambia el tamaño de la fuente según tus preferencias */
+            }
+        </style
+    </style>
+</head>
+<body>
+    <div id="navbarContainer"></div>
+    <div id="footerContainer"></div>
+
+    <script>
+        // Cargar la barra de navegación desde el archivo navbar.html
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbarContainer').innerHTML = data;
+            })
+            .catch(error => console.error('Error al cargar la barra de navegación:', error));
+               // Utiliza fetch para cargar el contenido del footer.html y luego lo inserta en #footerContainer
+        fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footerContainer').innerHTML = data;
+        });
+    </script>
+   
+    
+    <div class="center-content">
+        <h1 style="font-weight: bold;">Key indicator Performance</h1>
+    </div>
+
+    <div class="center-content">
+        <div class="graficos-arriba">
+            <div class="grafico-container">
+                <div class="velocimetro" id="velocimetro1">
+                    <h3 style="font-weight: bold; text-align: center;">Autorizaciones</h3>
+                </div>
+            </div>
+            <div class="grafico-container">
+                <div class="velocimetro" id="velocimetro2">
+                    <h3 style="font-weight: bold; text-align: center;">Disponibilidad Apis</h3>
+                </div>
+            </div>
+            <div class="grafico-container">
+                <div class="velocimetro" id="velocimetro3">
+                    <h3 style="font-weight: bold; text-align: center;">Tiempos de respuesta Apis (ms)</h3>
+                </div>
+            </div>
+            <div class="grafico-container">
+                <div class="velocimetro" id="velocimetro4">
+                    <h3 style="font-weight: bold; text-align: center;">Procesadas Chile</h3>
+                </div>
+            </div>
+        </div>
+        <div class="graficos-abajo">
+            <div class="grafico-container">
+                <div class="velocimetro" id="velocimetro5">
+                    <h3 style="font-weight: bold; text-align: center;">Procesadas Peru</h3>
+                </div>
+            </div>
+            <div class="grafico-container">
+                <div class="velocimetro" id="velocimetro6">
+                    <h3 style="font-weight: bold; text-align: center;">Disponibilidad Mastercard</h3>
+                </div>
+            </div>
+            <div class="grafico-container">
+                <div class="velocimetro" id="velocimetro7">
+                    <h3 style="font-weight: bold; text-align: center;">Disponibilidad Mambu</h3>
+                </div>
+            </div>
+            <div class="grafico-container">
+                <div class="velocimetro" id="velocimetro8">
+                    <h3 style="font-weight: bold; text-align: center;">Disponibilidad Global 66</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="center-content graficos-linea">
+        <div class="grafico-container">
+            <div class="velocimetro" id="velocimetro5">
+                <h3 style="font-weight: bold; text-align: center;"></h3>
+            </div>
+        </div>
+        <div class="grafico-container">
+            <div class="velocimetro" id="velocimetro6">
+                <h3 style="font-weight: bold; text-align: center;"></h3>
+            </div>
+        </div>
+        <div class="grafico-container">
+            <div class="velocimetro" id="velocimetro7">
+                <h3 style="font-weight: bold; text-align: center;"></h3>
+            </div>
+        </div>
+        <div class="grafico-container">
+            <div class="velocimetro" id="velocimetro8">
+                <h3 style="font-weight: bold; text-align: center;"></h3>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function crearVelocimetro(id, valor, esTiempoEnMilisegundos = false) {
+            const width = 200;
+            const height = 200;
+
+            const colores = {
+                velocimetro1: d3.scaleLinear()
+                    .domain([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+                    .range(["#ff0000", "#ff4444", "#ff8888", "#ffcc00", "#ffd700", "#aaffaa", "#88ff88"]),
+
+                velocimetro2: d3.scaleLinear()
+                    .domain([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+                    .range(["#ff0000", "#ff4444", "#ff8888", "#ffcc00", "#ffd700", "#aaffaa", "#88ff88"]),
+
+                velocimetro3: d3.scaleLinear()
+                    .domain([0, 16.67, 33.33, 50, 66.67, 83.33, 100])
+                    .range(["#00ff00", "#55ff55", "#88ff88", "#ffcc00", "#ff4444", "#ff0000"]),
+
+                velocimetro4: d3.scaleLinear()
+                    .domain([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+                    .range(["#ff0000", "#ff4444", "#ff8888", "#ffcc00", "#ffd700", "#aaffaa", "#88ff88"]),
+
+                velocimetro5: d3.scaleLinear()
+                    .domain([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+                    .range(["#ff0000", "#ff4444", "#ff8888", "#ffcc00", "#ffd700", "#aaffaa", "#88ff88"]),
+
+                velocimetro6: d3.scaleLinear()
+                    .domain([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+                    .range(["#ff0000", "#ff4444", "#ff8888", "#ffcc00", "#ffd700", "#aaffaa", "#88ff88"]),
+
+                velocimetro7: d3.scaleLinear()
+                    .domain([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+                    .range(["#ff0000", "#ff4444", "#ff8888", "#ffcc00", "#ffd700", "#aaffaa", "#88ff88"]),
+
+                velocimetro8: d3.scaleLinear()
+                    .domain([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+                    .range(["#ff0000", "#ff4444", "#ff8888", "#ffcc00", "#ffd700", "#aaffaa", "#88ff88"]),
+            };
+
+            const svg = d3.select(`#${id}`)
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("transform", "rotate(270)");
+
+            svg.append("path")
+                .attr("transform", "translate(100,100)")
+                .attr("d", d3.arc()
+                    .innerRadius(70)
+                    .outerRadius(100)
+                    .startAngle(0)
+                    .endAngle(Math.PI * 0.1666)
+                )
+                .style("fill", colores[id](10));
+
+            svg.append("path")
+                .attr("transform", "translate(100,100)")
+                .attr("d", d3.arc()
+                    .innerRadius(70)
+                    .outerRadius(100)
+                    .startAngle(Math.PI * 0.1666)
+                    .endAngle(Math.PI * 0.3333)
+                )
+                .style("fill", colores[id](20));
+
+            svg.append("path")
+                .attr("transform", "translate(100,100)")
+                .attr("d", d3.arc()
+                    .innerRadius(70)
+                    .outerRadius(100)
+                    .startAngle(Math.PI * 0.3333)
+                    .endAngle(Math.PI * 0.5)
+                )
+                .style("fill", colores[id](30));
+
+            svg.append("path")
+                .attr("transform", "translate(100,100)")
+                .attr("d", d3.arc()
+                    .innerRadius(70)
+                    .outerRadius(100)
+                    .startAngle(Math.PI * 0.5)
+                    .endAngle(Math.PI * 0.6666)
+                )
+                .style("fill", colores[id](40));
+
+            svg.append("path")
+                .attr("transform", "translate(100,100)")
+                .attr("d", d3.arc()
+                    .innerRadius(70)
+                    .outerRadius(100)
+                    .startAngle(Math.PI * 0.6666)
+                    .endAngle(Math.PI * 0.8333)
+                )
+                .style("fill", colores[id](50));
+
+            svg.append("path")
+                .attr("transform", "translate(100,100)")
+                .attr("d", d3.arc()
+                    .innerRadius(70)
+                    .outerRadius(100)
+                    .startAngle(Math.PI * 0.8333)
+                    .endAngle(Math.PI)
+                )
+                .style("fill", colores[id](60));
+
+            const angulo = esTiempoEnMilisegundos ? (Math.PI * (valor / 1000)) - (Math.PI * 0.5) : (Math.PI * (valor / 100)) - (Math.PI * 0.5);
+            const markerX = 100 + Math.cos(angulo) * 80;
+            const markerY = 100 + Math.sin(angulo) * 80;
+            svg.append("line")
+                .attr("x1", 100)
+                .attr("y1", 100)
+                .attr("x2", markerX)
+                .attr("y2", markerY)
+                .attr("stroke", "black")
+                .attr("stroke-width", 2);
+
+            for (let i = 0; i <= 100; i += 10) {
+                const anguloIntervalo = (Math.PI * (i / 100)) - (Math.PI * 0.5);
+                const startX = 100 + Math.cos(anguloIntervalo) * 90;
+                const startY = 100 + Math.sin(anguloIntervalo) * 90;
+                const endX = 100 + Math.cos(anguloIntervalo) * 95;
+                const endY = 100 + Math.sin(anguloIntervalo) * 95;
+
+                svg.append("line")
+                    .attr("x1", startX)
+                    .attr("y1", startY)
+                    .attr("x2", endX)
+                    .attr("y2", endY)
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 1);
+            }
+
+            const etiqueta = esTiempoEnMilisegundos ? " ms" : "%";
+            const valorEtiqueta = esTiempoEnMilisegundos ? valor : valor + etiqueta;
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", height / 1.3)
+                .attr("text-anchor", "middle")
+                .style("font-size", "24px")
+                .style("font-weight", "bold")
+                .style("fill", "black")
+                .text(valorEtiqueta)
+                .attr("transform", "rotate(-270, 100, 100)");
+        }
+
+        crearVelocimetro("velocimetro1", 25.00);
+        crearVelocimetro("velocimetro2", 99.56);
+        crearVelocimetro("velocimetro3", 461, true); // El tercer gráfico acepta tiempo en milisegundos.
+        crearVelocimetro("velocimetro4", 95.78);
+        crearVelocimetro("velocimetro5", 99.93);
+        crearVelocimetro("velocimetro6", 100);
+        crearVelocimetro("velocimetro7", 100);
+        crearVelocimetro("velocimetro8", 100);
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

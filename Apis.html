@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+         /* Estilos para el footer */
+         #footerContainer {
+            background-color: #00d1b2;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            font-size: 18px; /* Cambia el tamaño de la fuente según tus preferencias */
+        }
+        .small-table {
+            width: 30%;
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+        .table td, .table th {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbarContainer"></div>
+    <div id="footerContainer"></div>
+
+    <script>
+        // Cargar la barra de navegación desde el archivo navbar.html
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbarContainer').innerHTML = data;
+            })
+            .catch(error => console.error('Error al cargar la barra de navegación:', error));
+             // Utiliza fetch para cargar el contenido del footer.html y luego lo inserta en #footerContainer
+        fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footerContainer').innerHTML = data;
+        });
+    </script>
+    <div class="container">
+        <h1>Resumen desde Excel</h1>
+        <input type="file" id="excel-file" accept=".xlsx" />
+    </div>
+    
+    <div class="container table-container">
+        <h2>Tiempo de respuesta Apis</h2>
+        <table class="table table-striped table-bordered small-table">
+            <thead class="thead-light">
+                <tr>
+                    <th>Suma de Response Time</th>
+                    <th>Conteo de Controller Action</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <tr>
+                    <td id="total-response-time">0</td>
+                    <td id="num-controller-action">0</td>
+                </tr>
+                <tr>
+                    <td colspan="2" id="result-division"><b>Valor alcanzado: </b></td>
+                </tr>
+                <tr>
+                    <td colspan="2" id="expected-value"><b>Valor deseado: < 1000 ms</b></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+    <script>
+        document.getElementById('excel-file').addEventListener('change', handleFile);
+
+        function handleFile(e) {
+            const file = e.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const excelData = XLSX.utils.sheet_to_json(sheet);
+
+                    calculateSummary(excelData);
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        function calculateSummary(data) {
+            let totalResponseTime = 0;
+            let countControllerAction = 0;
+
+            data.forEach((row) => {
+                const responseTime = parseFloat(row.RESPONCE_TIME);
+                totalResponseTime += responseTime;
+
+                if (row.CONTROLLERACTION) {
+                    countControllerAction++;
+                }
+            });
+
+            document.getElementById('total-response-time').textContent = totalResponseTime;
+            document.getElementById('num-controller-action').textContent = countControllerAction;
+
+            const divisionResult = countControllerAction === 0 ? "No se puede dividir por cero" : (totalResponseTime / countControllerAction).toFixed(5);
+            document.getElementById('result-division').innerHTML = `<b>Valor alcanzado: ${divisionResult.substring(0, 5)}</b>`;
+            
+            const expectedValue = totalResponseTime / countControllerAction < 1000 ? "Valor deseado: < 1000 ms" : "Valor deseado: >= 1000 ms";
+            document.getElementById('expected-value').innerHTML = `<b>${expectedValue}</b>`;
+            
+            if (totalResponseTime / countControllerAction >= 1000) {
+                document.getElementById('expected-value').style.color = 'red';
+            } else {
+                document.getElementById('expected-value').style.color = 'green';
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
