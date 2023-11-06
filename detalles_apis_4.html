@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tabla y Gráfico desde Excel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .table-container {
+            width: 30%;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            height: 70%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: center;
+            padding: 2px;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .chart-container {
+            width: 50%;
+        }
+
+        .api-container {
+            border: 1px solid #dddddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .entity-select {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbarContainer"></div>
+    <div class="api-container">
+        <h2>DETALLES APIS</h2>
+        <input type="file" id="excel-file" accept=".xlsx" />
+        <select class="entity-select" id="entity-select">
+            <option value="TarjetaCambiaEstadoRequest">TarjetaCambiaEstadoRequest</option>
+            <option value="TarjetaRequest">TarjetaRequest</option>
+            <!-- Agrega más opciones aquí -->
+                <option value="TarjetaCambiaEstadoRequest">TarjetaCambiaEstadoRequest</option>
+                <option value="TarjetaRequest">TarjetaRequest</option>
+                <option value="PREPAGAALTATRANSACCIONV2Request">PREPAGAALTATRANSACCIONV2Request</option>
+                <option value="TarjetaHabilitarRequest">TarjetaHabilitarRequest</option>
+                <option value="TokenAccessLevel2Request">TokenAccessLevel2Request</option>
+                <option value="TarjetaBloquearRequest">TarjetaBloquearRequest</option>
+                <option value="TarjetaCambiaPinRequest">TarjetaCambiaPinRequest</option>
+                <option value="TarjetaDesbloquearRequest">TarjetaDesbloquearRequest</option>
+                <option value="ProvinciasRequest">ProvinciasRequest</option>
+                <option value="SucursalesRequest">SucursalesRequest</option>
+                <option value="MarcasRequest">MarcasRequest</option>
+                <option value="TipoProductosRequest">TipoProductosRequest</option>
+                <option value="MakeCVC2Request">MakeCVC2Request</option>
+                <option value="MakePINRequest">MakePINRequest</option>
+                <option value="MakePINOffsetRequest">MakePINOffsetRequest</option>
+                <option value="Seleccionar todos">Seleccionar todos</option>
+            </select>
+            
+        </select>
+        <button id="load-data-button">Cargar Datos</button>
+        <div class="container">
+            <div class="table-container" id="table-container"></div>
+            <div class="chart-container">
+                <canvas id="chart-container"></canvas>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+           // Cargar la barra de navegación desde el archivo navbar.html
+           fetch('navbar.html')
+           .then(response => response.text())
+           .then(data => {
+               document.getElementById('navbarContainer').innerHTML = data;
+           })
+           .catch(error => console.error('Error al cargar la barra de navegación:', error));
+        document.getElementById('load-data-button').addEventListener('click', loadSelectedData);
+
+        let excelData = [];
+
+        document.getElementById('excel-file').addEventListener('change', handleFile);
+
+        function handleFile(e) {
+            const file = e.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+
+                    // Inicializa un array para almacenar datos de todas las hojas.
+                    excelData = [];
+
+                    workbook.SheetNames.forEach(sheetName => {
+                        const sheet = workbook.Sheets[sheetName];
+                        const sheetData = XLSX.utils.sheet_to_json(sheet);
+                        excelData = excelData.concat(sheetData);
+                    });
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        function loadSelectedData() {
+            const selectedEntity = document.getElementById('entity-select').value;
+            const filteredData = excelData.filter(row => row.ENTITYNAME === selectedEntity);
+
+            if (filteredData.length > 0) {
+                const groupedData = groupAndCalculateData(filteredData);
+                const sortedData = sortDataByDate(groupedData);
+                const table = createTable(sortedData);
+                document.getElementById('table-container').innerHTML = '';
+                document.getElementById('table-container').appendChild(table);
+
+                const chartData = createChartData(sortedData);
+                createLineChart(chartData);
+            } else {
+                document.getElementById('table-container').innerHTML = 'No se encontraron datos para la entidad seleccionada.';
+                document.getElementById('chart-container').innerHTML = '';
+            }
+        }
+
+        function groupAndCalculateData(data) {
+            const groupedData = {};
+
+            data.forEach(rowData => {
+                const fullDate = rowData['DATE_RESPONCE'] || '-';
+                const day = fullDate.substring(8, 10);
+
+                if (!groupedData[day]) {
+                    groupedData[day] = {
+                        DATE_RESPONCE: day,
+                        RESPONCE_TIME: 0,
+                        'Conteo de Request': 0,
+                    };
+                }
+
+                groupedData[day].RESPONCE_TIME += parseFloat(rowData['RESPONCE_TIME']) || 0;
+                groupedData[day]['Conteo de Request'] += rowData['REQUESTID'] ? 1 : 0;
+            });
+
+            return Object.values(groupedData);
+        }
+
+        function sortDataByDate(data) {
+            return data.sort((a, b) => a.DATE_RESPONCE - b.DATE_RESPONCE);
+        }
+
+        function createTable(data) {
+            const table = document.createElement('table');
+            const headers = ['DATE_RESPONCE', 'RESPONCE_TIME', 'Conteo de Request', 'Promedio Diario'];
+
+            const headerRow = document.createElement('tr');
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+            table.appendChild(headerRow);
+
+            data.forEach(rowData => {
+                const row = document.createElement('tr');
+                headers.forEach(header => {
+                    const cell = document.createElement('td');
+                    if (header === 'Promedio Diario') {
+                        const promedio = rowData['RESPONCE_TIME'] / rowData['Conteo de Request'];
+                        cell.textContent = isNaN(promedio) ? '-' : promedio.toFixed(2);
+                        if (!isNaN(promedio) && promedio > 1000) {
+                            cell.style.color = 'red';
+                        }
+                    } else {
+                        cell.textContent = rowData[header] || '-';
+                    }
+                    row.appendChild(cell);
+                });
+                table.appendChild(row);
+            });
+
+            return table;
+        }
+
+        function createChartData(data) {
+            const labels = data.map(row => row.DATE_RESPONCE);
+            const promedios = data.map(row => (row['RESPONCE_TIME'] / row['Conteo de Request']).toFixed(2));  // Error corregido aquí
+            return {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Promedio Diario',
+                        data: promedios,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                    },
+                ],
+            };
+        }
+
+        function createLineChart(data) {
+            const ctx = document.getElementById('chart-container').getContext('2d');
+            const myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                    scales: {
+                        x: [{
+                            title: {
+                                display: true,
+                                text: 'Día',
+                            },
+                        }],
+                        y: [{
+                            title: {
+                                display: true,
+                                text: 'Promedio Diario',
+                            },
+                        }],
+                    },
+                },
+            });
+        }
+    </script>
+</body>
+</html>
+
