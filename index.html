@@ -1,68 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenidos a Financial Services</title>
+    <!-- Incluye los estilos de Bootstrap y Bootstrap JavaScript -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <title>Documento Principal</title>
-
     <style>
-        /* Estilos para el footer */
-        #footerContainer {
-            background-color: #00d1b2;
-            color: #fff;
+        body {
+            background-image: url('5.jpg'); /* Ruta de la imagen de fondo */
+            background-size: cover;
+            background-attachment: fixed;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-form {
+            background: rgba(255, 255, 255, 0.8); /* Fondo blanco semitransparente */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
             text-align: center;
-            padding: 10px;
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            font-size: 18px; /* Cambia el tamaño de la fuente según tus preferencias */
+        }
+        .login-form img {
+            width: 200px; /* Ajusta el tamaño de la imagen de inicio de sesión */
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <!-- Aquí puedes agregar tu propio contenido -->
-
-    <div id="navbarContainer"></div>
-    <div id="footerContainer"></div>
-
     <div class="container">
-        <div class="row align-items-center" style="height: 70vh;">
-            <div class="col-12">
-                <img src="bizland.png" alt="Logo de la empresa" style="max-width: 200px; max-height: 100px;">
-                <div class="col-md-6">
-                    <div class="col-md-6">
-                        <img src="dashboard.jpeg" alt="Otra imagen" style="max-width: 200px; max-height: 100px;">
-                    </div>
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="login-form">
+                    <img src="bizland.jpeg" alt="Financial Services Logo" class="img-fluid">
+                    <h2 class="mb-4">Bienvenidos a Financial Services</h2>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="correo" placeholder="Usuario" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="contrasena" placeholder="Contraseña" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button>
+                    </form>
+                    <p id="mensaje-error" class="text-danger mt-2"></p>
                 </div>
-                <h1 class="display-4" style="margin-top: 20px;">Bienvenido al Panel de Reportes y Dashboard de Entregas Mensuales</h1>
-            <p class="lead" style="margin-top: 20px;">Panel de reportes y dashboard de entregas mensuales hacia nuestro cliente global, Global 66. Aquí encontrarás una visión detallada de nuestros procesos y resultados, respaldados por análisis de datos precisos y en tiempo real.</p>
-            <p class="lead" style="margin-top: 20px;">Nuestra dedicación a la excelencia y la transparencia nos impulsa a proporcionarte información actualizada sobre nuestras operaciones financieras. Este panel de reportes te permitirá acceder a métricas clave, gráficos informativos y análisis profundos que respaldan la toma de decisiones estratégicas.</p>
-            <p class="lead" style="margin-top: 20px;">Mantente al tanto de nuestros logros, sigue de cerca los indicadores clave de rendimiento y descubre cómo nuestro equipo trabaja incansablemente para optimizar y garantizar el éxito de Global 66. Estamos comprometidos con la entrega oportuna y efectiva de nuestros servicios, y esta plataforma es tu puerta de entrada a un mundo de información valiosa para tus operaciones financieras globales.</p>
-            <p class="lead" style="margin-top: 20px;">Te invitamos a explorar y aprovechar al máximo esta potente herramienta. Siempre estamos a tu disposición para responder a tus preguntas y proporcionarte el soporte que necesitas. ¡Gracias por confiar en nosotros y por ser parte de la visión global de éxito financiero!</p>
+            </div>
         </div>
     </div>
 
     <script>
-        // Cargar la barra de navegación desde el archivo navbar.html
-        fetch('navbar.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('navbarContainer').innerHTML = data;
-            })
-            .catch(error => console.error('Error al cargar la barra de navegación:', error));
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
 
-        // Utiliza fetch para cargar el contenido del footer.html y luego lo inserta en #footerContainer
-        fetch('footer.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('footerContainer').innerHTML = data;
+            var correo = document.getElementById("correo").value;
+            var contrasena = document.getElementById("contrasena").value;
+
+            if (correo === "maximiliano.erramouspe@bizland.tech" && contrasena === "Q1jPGIPttGgyiBZc") {
+                window.location.href = "principal.html";
+            } else if (correo === "tomas.acosta@bizland.tech" && contrasena === "356kuljGk2vA60g8") {
+                window.location.href = "principal.html";
+            } else if (correo === "claudio.nahoum@bizland.tech" && contrasena === "Ffkt7FNX4v8u6Sld") {
+                window.location.href = "principal.html";
+            } else {
+                document.getElementById("mensaje-error").textContent = "Disculpa, pero no tienes acceso al sitio.";
+            }
         });
     </script>
 </body>
 </html>
+
 
