@@ -1,0 +1,94 @@
+/* Estilo para la flecha verde */
+.positive {
+    border-bottom-color: #28a745;
+    color: #28a745; /* Color del texto de la flecha verde */
+}
+
+/* Ajuste del tamaño de la flecha verde y el valor 0.4 */
+.positive .arrow-up {
+    font-size: 1.2em;
+    border-bottom: 10px solid #28a745;
+}
+
+/* Otros estilos... */
+/* Estilo para la flecha verde en valores negativos */
+.negative {
+    border-bottom-color: #ff6347; /* Rojo */
+    color: #ff6347; /* Color del texto de la flecha roja */
+}
+
+/* Ajuste del tamaño de la flecha en valores negativos */
+.negative .arrow-up {
+    font-size: 1.2em;
+    border-bottom: 10px solid #ff6347; /* Rojo */
+}
+
+
+.card-container {
+    margin-top: 20px; /* Separación entre el título y las cards */
+}
+
+.card {
+    margin: 5px; /* Margen de las cards reducido */
+    background-color: #f0f0f0; /* Fondo más suave */
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.15); /* Aumenta el tamaño al hacer hover */
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.percentage {
+    font-size: 1.5em; /* Tamaño del porcentaje aumentado */
+    font-weight: bold; /* Porcentaje en negrita */
+    margin-bottom: 5px;
+}
+
+.arrow-up {
+    width: 0;
+    height: 0;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    margin-top: 5px; /* Espacio adicional entre el porcentaje y la flecha */
+    font-weight: bold; /* Agregado para hacer el texto en negrita */
+
+}
+
+.fa-icon {
+    font-size: 1.5em; /* Tamaño del icono reducido */
+    margin-bottom: 5px; /* Margen inferior del icono */
+    color: #007bff; /* Color azul */
+}
+
+.card-title {
+    font-size: 0.7em; /* Tamaño del título reducido */
+    margin-bottom: 8px;
+    font-weight: bold; /* Títulos en negrita */
+}
+
+.metrics-title {
+    margin-top: 20px; /* Espacio entre las cards y el título "Métricas" */
+    text-align: center;
+    font-size: 0.7em; /* Tamaño del título reducido */
+    font-weight: bold;
+}
+
+/* Colores diferentes para los iconos */
+.fa-check-circle { color: #ff6347; } /* Rojo */
+.fa-server { color: #8a2be2; } /* Morado */
+.fa-clock { color: #00ced1; } /* Azul claro */
+.fa-chart-bar { color: #ffc0cb; } /* Rosa claro */
+.fa-cc-mastercard { color: #ffd700; } /* Dorado */
+.fa-cloud { color: #3cb371; } /* Verde oliva */
+.fa-globe-americas { color: #ffa07a; } /* Salmón */
+
+
+
+
+
